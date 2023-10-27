@@ -8,7 +8,7 @@
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @version     1.1
-// @description Adds a hide button to items offered in Amazon Vine.
+// @description Adds a hide button to items offered in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
 
 var hiddenCount = 0;
