@@ -19,19 +19,33 @@
 // @grant       GM_setValue
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
-// @version     1.2
+// @version     1.3
 // @description Adds a hide button to items offered in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
 
+// Hide/Unhide Symbols
 var hideSymbol="🚫"
 var unhideSymbol="🧿"
 
-//English Language support
-if (location.hostname == "www.amazon.co.uk" || location.hostname == "www.amazon.com"){
-    var hiddenText="Hidden"
-    var showMessage="Show hidden items"
-    var hideMessage="Hide all items on this page"
-    var unhideMessage="Unhide all items on this page"
+// Default Text strings
+var hiddenText="Hidden";
+var showMessage="Show hidden items";
+var hideMessage="Hide all items on this page";
+var unhideMessage="Unhide all items on this page";
+
+// UK US Language / Viewport support
+if (location.hostname == "www.amazon.co.uk" || location.hostname == "www.amazon.com" || location.hostname == "www.amazon.ca"){
+    if (window.innerWidth >= 1250){
+        hiddenText="Hidden";
+        showMessage="Show hidden items";
+        hideMessage="Hide all items on this page";
+        unhideMessage="Unhide all items on this page";
+    } else {
+        hiddenText="Hidden";
+        showMessage="Show hidden";
+        hideMessage="Hide all";
+        unhideMessage="Unhide all";
+    }
 }
 
 var hiddenCount = 0;
