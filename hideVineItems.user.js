@@ -33,7 +33,7 @@ var showMessage="Show hidden items";
 var hideMessage="Hide all items on this page";
 var unhideMessage="Unhide all items on this page";
 
-// UK US Language / Viewport support
+// UK US CA Language / Viewport support
 if (location.hostname == "www.amazon.co.uk" || location.hostname == "www.amazon.com" || location.hostname == "www.amazon.ca"){
     if (window.innerWidth >= 1250){
         hiddenText="Hidden";
