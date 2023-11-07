@@ -74,7 +74,7 @@ function addHideLink(tile, ASIN) {
   var tileContent = tile.querySelector(".vvp-item-tile-content");
   if (tileContent) {
     var a = document.createElement("span");
-    a.innerHTML = '<img src="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Hide3.png"/>';
+    a.innerHTML = '<img src="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Hide.png"/>';
     a.addEventListener("click", (e) => {
       tile.classList.toggle("hideVineItems-hideASIN");
       if (isHidden(ASIN)) {
@@ -127,7 +127,7 @@ GM_addStyle(`
 
 .hideVineItems-hideASIN .vvp-item-tile-content .hideVineItems-toggleASIN img
 {
-  content: url("https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Unhide3.png");
+  content: url("https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Unhide.png");
 }
 
 .hideVineItems-showHidden .hideVineItems-hideASIN {
