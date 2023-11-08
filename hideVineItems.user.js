@@ -19,7 +19,7 @@
 // @grant       GM_setValue
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
-// @version     1.5
+// @version     1.6
 // @description Adds additional toggle, hide and unhide links to items offered in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
 
@@ -80,7 +80,7 @@ function addHideLink(tile, ASIN) {
   var tileContent = tile.querySelector(".vvp-item-tile-content");
   if (tileContent) {
     var a = document.createElement("span");
-    a.innerHTML = '<img src="${hideSymbol}"/>';
+    a.innerHTML = '<img src="' + hideSymbol + '"/>';
     a.addEventListener("click", (e) => {
       tile.classList.toggle("hideVineItems-hideASIN");
       if (isHidden(ASIN)) {
