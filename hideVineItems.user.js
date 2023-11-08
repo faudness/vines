@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        Hide Vine Items UK
+// @name        Hide Vine Items Enhanced
 // @namespace   https://github.com/MD2K23/VineToolsUK
 // @match       https://www.amazon.co.uk/vine/vine-items*
 // @exclude     https://www.amazon.co.uk/vine/vine-items*search=*
@@ -14,20 +14,20 @@
 // @match       https://www.amazon.it/vine/vine-items*
 // @exclude     https://www.amazon.it/vine/vine-items*search=*
 // @match       https://www.amazon.es/vine/vine-items*
-// @exclude     https://www.amazon.se/vine/vine-items*search=*
+// @exclude     https://www.amazon.es/vine/vine-items*search=*
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
-// @version     1.4
-// @description Adds a hide button to items offered in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
+// @version     1.5
+// @description Adds additional toggle, hide and unhide links to items offered in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
 
 // Hide/Unhide Symbols
-var hideSymbol="🚫"
-var unhideSymbol="🧿"
+var hideSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Hide.png"
+var unhideSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Unhide.png"
 
-// Default Text strings
+// Default Text strings to use if there isn't a localized option below
 var hiddenText="Hidden";
 var showMessage="Show hidden items";
 var hideMessage="Hide all items on this page";
@@ -36,11 +36,13 @@ var unhideMessage="Unhide all items on this page";
 // UK US CA Language / Viewport support
 if (location.hostname == "www.amazon.co.uk" || location.hostname == "www.amazon.com" || location.hostname == "www.amazon.ca"){
     if (window.innerWidth >= 1250){
+        // For wide viewport
         hiddenText="Hidden";
         showMessage="Show hidden items";
         hideMessage="Hide all items on this page";
         unhideMessage="Unhide all items on this page";
     } else {
+        // For narrow viewport
         hiddenText="Hidden";
         showMessage="Show hidden";
         hideMessage="Hide all";
@@ -51,19 +53,23 @@ if (location.hostname == "www.amazon.co.uk" || location.hostname == "www.amazon.
 var hiddenCount = 0;
 var messageSpan = document.createElement("span");
 messageSpan.classList.add("hideVineItems-message");
-messageSpan.innerHTML = ` <span id="hideVineItems-count">(${hiddenCount}</span>
-<span style="margin-right:10px"> ${hiddenText})</span>&#x2022
+messageSpan.innerHTML = `
+<span id="hideVineItems-count"></span>
+<span class="bullet">&#x2022</span>
 <span id="hideVineItems-toggleText">${showMessage}</span>
-<label class="switch"><input id="hideVineItems-togglePage" type="checkbox"><span class="slider round"></span></label>&#x2022
-<a id="hideVineItems-hideAll"><img id="hideSymbol-image" src="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Hide.png" alt=${hideSymbol}/>${hideMessage}</a>&#x2022
-<a id="hideVineItems-unhideAll"><img id="unhideSymbol-image" src="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Unhide.png" alt=${unhideSymbol}/>${unhideMessage}</a>`;
+<label class="switch"><input id="hideVineItems-togglePage" type="checkbox"><span class="slider round"></span></label>
+<span class="bullet">&#x2022</span>
+<a id="hideVineItems-hideAll"><img id="hideSymbol-image" src="${hideSymbol}"/>${hideMessage}</a>
+<span class="bullet">&#x2022</span>
+<a id="hideVineItems-unhideAll"><img id="unhideSymbol-image" src="${unhideSymbol}"/>${unhideMessage}</a>
+`;
 messageSpan.querySelector("#hideVineItems-togglePage").addEventListener("click", (e) => {document.querySelector(":root").classList.toggle("hideVineItems-showHidden");})
 messageSpan.querySelector("#hideVineItems-hideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile:not(.hideVineItems-hideASIN) .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
 messageSpan.querySelector("#hideVineItems-unhideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
 document.querySelector("#vvp-items-grid-container > p").append(messageSpan);
 
 function updateCount() {
-  document.getElementById("hideVineItems-count").innerHTML = `${hiddenCount}`;
+  document.getElementById("hideVineItems-count").innerHTML = `(${hiddenCount} ${hiddenText})`;
 }
 
 function isHidden(ASIN) {
@@ -74,7 +80,7 @@ function addHideLink(tile, ASIN) {
   var tileContent = tile.querySelector(".vvp-item-tile-content");
   if (tileContent) {
     var a = document.createElement("span");
-    a.innerHTML = '<img src="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Hide.png"/>';
+    a.innerHTML = '<img src="${hideSymbol}"/>';
     a.addEventListener("click", (e) => {
       tile.classList.toggle("hideVineItems-hideASIN");
       if (isHidden(ASIN)) {
@@ -127,7 +133,7 @@ GM_addStyle(`
 
 .hideVineItems-hideASIN .vvp-item-tile-content .hideVineItems-toggleASIN img
 {
-  content: url("https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Unhide.png");
+  content: url("${unhideSymbol}");
 }
 
 .hideVineItems-showHidden .hideVineItems-hideASIN {
@@ -135,9 +141,16 @@ GM_addStyle(`
   opacity: 50%;
 }
 
-#hideVineItems-hideAll, #hideVineItems-unhideAll, #hideVineItems-togglePage, #hideVineItems-toggleText {
- margin-left:8px;
- margin-right:10px;
+#hideSymbol-image, #unhideSymbol-image {
+  width: 20px;
+  padding: 0;
+  margin-top:2px;
+  margin-right:5px;
+}
+
+.bullet {
+  margin-left:8px;
+  margin-right:10px;
 }
 
 .switch {
@@ -145,7 +158,7 @@ GM_addStyle(`
   display: inline-block;
   width: 32px;
   height: 20px;
-  margin-right:10px;
+  margin-left:10px;
 }
 
 .switch input {
@@ -200,12 +213,4 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-
-#hideSymbol-image, #unhideSymbol-image {
-width: 20px;
-padding: 0;
-margin-top:2px;
-margin-right:5px;
-}
-
 `);
