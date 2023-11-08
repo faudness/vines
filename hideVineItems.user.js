@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        Hide Vine Items Enhanced
+// @name        Hide Vine Items UK
 // @namespace   https://github.com/MD2K23/VineToolsUK
 // @match       https://www.amazon.co.uk/vine/vine-items*
 // @exclude     https://www.amazon.co.uk/vine/vine-items*search=*
