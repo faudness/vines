@@ -19,34 +19,42 @@
 // @grant       GM_setValue
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
-// @version     1.6
+// @version     1.7
 // @description Adds additional toggle, hide and unhide links to items offered in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
 
 // Hide/Unhide Symbols
-var hideSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Hide.png"
-var unhideSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Unhide.png"
+var hideSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Hide.png";
+var unhideSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Unhide.png";
 
 // Default Text strings to use if there isn't a localized option below
-var hiddenText="Hidden";
+var hiddenText=" Hidden";
 var showMessage="Show hidden items";
 var hideMessage="Hide all items on this page";
 var unhideMessage="Unhide all items on this page";
 
 // UK US CA Language / Viewport support
 if (location.hostname == "www.amazon.co.uk" || location.hostname == "www.amazon.com" || location.hostname == "www.amazon.ca"){
-    if (window.innerWidth >= 1250){
-        // For wide viewport
-        hiddenText="Hidden";
+    if (window.innerWidth >= 1275){
+        // For normal/wide viewport
+        hiddenText=" Hidden";
         showMessage="Show hidden items";
         hideMessage="Hide all items on this page";
         unhideMessage="Unhide all items on this page";
-    } else {
+    }
+    if (window.innerWidth >= 1000 && window.innerWidth < 1275){
         // For narrow viewport
-        hiddenText="Hidden";
+        hiddenText=" Hidden";
         showMessage="Show hidden";
         hideMessage="Hide all";
         unhideMessage="Unhide all";
+    }
+    if (window.innerWidth < 1000){
+        // For ultra narrow viewport
+        hiddenText=" Hidden";
+        showMessage="";
+        hideMessage="";
+        unhideMessage="";
     }
 }
 
@@ -65,11 +73,11 @@ messageSpan.innerHTML = `
 `;
 messageSpan.querySelector("#hideVineItems-togglePage").addEventListener("click", (e) => {document.querySelector(":root").classList.toggle("hideVineItems-showHidden");})
 messageSpan.querySelector("#hideVineItems-hideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile:not(.hideVineItems-hideASIN) .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
-messageSpan.querySelector("#hideVineItems-unhideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
+messageSpan.querySelector("#hideVineItems-unhideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile.hideVineItems-hideASIN .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
 document.querySelector("#vvp-items-grid-container > p").append(messageSpan);
 
 function updateCount() {
-  document.getElementById("hideVineItems-count").innerHTML = `(${hiddenCount} ${hiddenText})`;
+  document.getElementById("hideVineItems-count").innerHTML = `(${hiddenCount}${hiddenText})`;
 }
 
 function isHidden(ASIN) {
@@ -112,6 +120,17 @@ document.querySelectorAll(".vvp-item-tile").forEach( (tile) => {
 updateCount();
 
 GM_addStyle(`
+
+#hideVineItems-hideAll, #hideVineItems-unhideAll {
+  color: #0F1111;
+}
+
+#hideVineItems-hideAll:hover, #hideVineItems-unhideAll:hover {
+  color: #007185;
+  text-decoration: underline;
+}
+
+
 .hideVineItems-hideASIN {
   display:none;
 }
@@ -125,8 +144,8 @@ GM_addStyle(`
   width: 20px !important;
   height: 18px !important;
   overflow: hidden;
-  top: 5px;
-  right: 5px;
+  top: 2px;
+  right: 2px;
   background-color: rgba(0,0,0,0.0);
   padding: 0;
 }
