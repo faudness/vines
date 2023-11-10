@@ -19,7 +19,7 @@
 // @grant       GM_setValue
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
-// @version     1.7
+// @version     1.8
 // @description Adds additional toggle, hide and unhide links to items offered in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
 
@@ -67,9 +67,9 @@ messageSpan.innerHTML = `
 <span id="hideVineItems-toggleText">${showMessage}</span>
 <label class="switch"><input id="hideVineItems-togglePage" type="checkbox"><span class="slider round"></span></label>
 <span class="bullet">&#x2022</span>
-<a id="hideVineItems-hideAll"><img id="hideSymbol-image" src="${hideSymbol}"/>${hideMessage}</a>
+<a id="hideVineItems-hideAll">${hideMessage}</a>
 <span class="bullet">&#x2022</span>
-<a id="hideVineItems-unhideAll"><img id="unhideSymbol-image" src="${unhideSymbol}"/>${unhideMessage}</a>
+<a id="hideVineItems-unhideAll">${unhideMessage}</a>
 `;
 messageSpan.querySelector("#hideVineItems-togglePage").addEventListener("click", (e) => {document.querySelector(":root").classList.toggle("hideVineItems-showHidden");})
 messageSpan.querySelector("#hideVineItems-hideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile:not(.hideVineItems-hideASIN) .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
@@ -88,7 +88,6 @@ function addHideLink(tile, ASIN) {
   var tileContent = tile.querySelector(".vvp-item-tile-content");
   if (tileContent) {
     var a = document.createElement("span");
-    a.innerHTML = '<img src="' + hideSymbol + '"/>';
     a.addEventListener("click", (e) => {
       tile.classList.toggle("hideVineItems-hideASIN");
       if (isHidden(ASIN)) {
@@ -130,7 +129,6 @@ GM_addStyle(`
   text-decoration: underline;
 }
 
-
 .hideVineItems-hideASIN {
   display:none;
 }
@@ -142,33 +140,48 @@ GM_addStyle(`
 .hideVineItems-toggleASIN {
   position: absolute;
   width: 20px !important;
-  height: 18px !important;
+  height: 17px !important;
   overflow: hidden;
   top: 2px;
   right: 2px;
   background-color: rgba(0,0,0,0.0);
   padding: 0;
+  background: url("${hideSymbol}");
+  background-repeat: no-repeat;
+  background-size:contain;
 }
 
-.hideVineItems-hideASIN .vvp-item-tile-content .hideVineItems-toggleASIN img
+.hideVineItems-hideASIN .vvp-item-tile-content .hideVineItems-toggleASIN
 {
-  content: url("${unhideSymbol}");
+  background: url("${unhideSymbol}");
+  background-repeat: no-repeat;
+  background-size:contain;
 }
 
 .hideVineItems-showHidden .hideVineItems-hideASIN {
   display:unset;
+}
+
+.hideVineItems-showHidden .hideVineItems-hideASIN img, .hideVineItems-showHidden .hideVineItems-hideASIN .a-button, .hideVineItems-showHidden .hideVineItems-hideASIN a {
   opacity: 50%;
 }
 
-#hideSymbol-image, #unhideSymbol-image {
-  width: 20px;
-  padding: 0;
-  margin-top:2px;
-  margin-right:5px;
+#hideVineItems-hideAll {
+  background: url("${hideSymbol}");
+  background-repeat: no-repeat;
+  background-size:contain;
+  padding-left:30px;
+}
+
+#hideVineItems-unhideAll {
+  background: url("${unhideSymbol}");
+  background-repeat: no-repeat;
+  background-size:contain;
+  padding-left:30px;
 }
 
 .bullet {
-  margin-left:8px;
+  margin-left:10px;
   margin-right:10px;
 }
 
