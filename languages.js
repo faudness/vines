@@ -9,9 +9,9 @@ var filterText;
 var unfilterText;
 var filterMessage;
 var unfilterMessage;
-var highlightText";
-var unhighlightText";
-var highlightMessage";
+var highlightText;
+var unhighlightText;
+var highlightMessage;
 var unhighlightMessage;
 
 
