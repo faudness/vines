@@ -1,18 +1,18 @@
 // Default Text strings to use if there isn't a localized option below
-const hiddenText=" Hidden";
-const filteredText=" Filtered";
-const menuText="Advanced Filters";
-const showMessage="Show Hidden / Filtered";
-const hideMessage="Hide all items on this page";
-const unhideMessage="Unhide all items on this page";
-const filterText="Hide Keyword / Phrase";
-const unfilterText="Unhide Keyword / Phrase";
-const filterMessage="Enter keyword / phrase to hide:";
-const unfilterMessage="Enter number of keyword / phrase to unhide:";
-const highlightText="Highlight Keyword / Phrase"
-const unhighlightText="Stop highlighting Keyword / Phrase"
-const highlightMessage="Enter keyword / phrase to highlight:";
-const unhighlightMessage="Enter number of keyword / phrase to stop highlighting:";
+var hiddenText=" Hidden";
+var filteredText=" Filtered";
+var menuText="Advanced Filters";
+var showMessage="Show Hidden / Filtered";
+var hideMessage="Hide all items on this page";
+var unhideMessage="Unhide all items on this page";
+var filterText="Hide Keyword / Phrase";
+var unfilterText="Unhide Keyword / Phrase";
+var filterMessage="Enter keyword / phrase to hide:";
+var unfilterMessage="Enter number of keyword / phrase to unhide:";
+var highlightText="Highlight Keyword / Phrase"
+var unhighlightText="Stop highlighting Keyword / Phrase"
+var highlightMessage="Enter keyword / phrase to highlight:";
+var unhighlightMessage="Enter number of keyword / phrase to stop highlighting:";
 
 // UK US CA Language / Viewport support
 if (location.hostname == "www.amazon.co.uk" || location.hostname == "www.amazon.com" || location.hostname == "www.amazon.ca"){
