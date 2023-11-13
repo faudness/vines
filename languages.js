@@ -1,3 +1,20 @@
+//Declare variables
+var hiddenText;
+var filteredText;
+var menuText;
+var showMessage;
+var hideMessage;
+var unhideMessage;
+var filterText;
+var unfilterText;
+var filterMessage;
+var unfilterMessage;
+var highlightText";
+var unhighlightText";
+var highlightMessage";
+var unhighlightMessage;
+
+
 // FR Language / Viewport support
 if (location.hostname == "www.amazon.co.uk"){
     hiddenText=" Masqué(s)";
