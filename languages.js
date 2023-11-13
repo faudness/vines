@@ -1,5 +1,5 @@
 // FR Language / Viewport support
-if (location.hostname == "www.amazon.fr"){
+if (location.hostname == "www.amazon.co.uk"){
     hiddenText=" Masqué(s)";
     filteredText=" Filtré(s)";
     filterMessage="Entrer le mot-clé / l'expression à masquer :";
