@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name        Hide Vine Items UK
 // @namespace   https://github.com/MD2K23/VineToolsUK
+// @run-at      document-start
 // @match       https://www.amazon.co.uk/vine/vine-items*
 // @exclude     https://www.amazon.co.uk/vine/vine-items*search=*
 // @match       https://www.amazon.com/vine/vine-items*
@@ -20,103 +21,89 @@
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     2.0
+// @version     2.1
 // @description Adds additional options to let you hide products in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
+
+document.onreadystatechange = function () {if (document.readyState === "interactive") {
+
+//Define variables for later use
+var hiddenCount = 0;
+var filteredCount = 0;
+//var gmValues=GM_listValues();
+const bgcolour=window.getComputedStyle(document.body).getPropertyValue('background-color');
+const textcolour=window.getComputedStyle(document.body).getPropertyValue('color');
+var hiddenText,filteredText,filterMessage,unfilterMessage,highlightMessage,unhighlightMessage,
+    filterText,unfilterText,highlightText,unhighlightText,menuText,showMessage,hideMessage,
+    unhideMessage,nofiltersMessage,nohighlightsMessage,invalidfilterMessage,invalidhighlightMessage
+
+// UK US CA Language / Viewport support
+switch(location.hostname){
+    case "www.amazon.fr":
+        hiddenText=`${hiddenCount > 1 ? " Masqués" : " Masqué"}`;
+        filteredText=`${filteredCount > 1 ? " Filtrés" : " Filtré"}`;
+        filterMessage="Entrer le mot-clé / l'expression à masquer :";
+        unfilterMessage = "Entrer le numéro du mot-clé / de l'expression à afficher :";
+        highlightMessage = "Entrer le mot-clé / l'expression à mettre en évidence :";
+        unhighlightMessage = "Entrer le numéro du mot-clé / de l'expression à ne plus mettre en évidence :";
+        filterText="Masquer le mot-clé / l'expression";
+        unfilterText="Afficher le mot-clé / l'expression";
+        highlightText = "Mettre en évidence le mot-clé / l'expression";
+        unhighlightText = "Ne plus mettre en évidence le mot-clé / l'expression";
+        menuText = "Filtres avancés";
+        showMessage="Montrer les articles masqués / filtrés";
+        hideMessage="Tout masquer sur cette page";
+        unhideMessage="Tout afficher sur cette page";
+        nofiltersMessage = "Il n'y a pas de filtres à supprimer";
+        nohighlightsMessage = "Il n'y a pas de mises en évidence à supprimer";
+        invalidfilterMessage = "Numéro de filtre invalide saisi";
+        invalidhighlightMessage = "Numéro de mise en évidence invalide saisi";
+
+        // For narrow viewport
+        if (window.innerWidth < 1000){
+            menuText="Avancés";
+            showMessage="Afficher cachés";
+            hideMessage="Tout cacher";
+            unhideMessage="Tout afficher";
+        }
+        break;
+
+    default:
+        hiddenText=" Hidden";
+        filteredText=" Filtered";
+        filterMessage="Enter keyword / phrase to hide:";
+        unfilterMessage="Enter the number of the keyword / phrase to unhide:";
+        highlightMessage="Enter keyword / phrase to highlight:";
+        unhighlightMessage="Enter the number of the keyword / phrase to unhighlight:";
+        filterText="Hide Keyword / Phrase";
+        unfilterText="Unhide Keyword / Phrase";
+        highlightText="Highlight Keyword / Phrase";
+        unhighlightText="Unhighlight Keyword / Phrase";
+        menuText="Advanced Filters";
+        showMessage="Show Hidden / Filtered";
+        hideMessage="Hide all items on this page";
+        unhideMessage="Unhide all items on this page";
+        nofiltersMessage="There are no filters to remove";
+        nohighlightsMessage="There are no highlights to remove";
+        invalidfilterMessage="Invalid filter number entered";
+        invalidhighlightMessage="Invalid highlight number entered";
+
+        // For narrow viewport
+        if (window.innerWidth < 1000){
+            menuText="Advanced";
+            showMessage="Show Hidden";
+            hideMessage="Hide all";
+            unhideMessage="Unhide all";
+        }
+}
 
 // Hide/Unhide Symbols
 var hideSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Hide.png";
 var unhideSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Unhide.png";
 var filterSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Filter.png";
 var unfilterSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Unfilter.png";
-
-// Default Text strings to use if there isn't a localized option below
-var hiddenText=" Hidden";
-var filteredText=" Filtered";
-var showMessage="Show hidden / filtered items";
-var hideMessage="Hide all items on this page";
-var unhideMessage="Unhide all items on this page";
-var filterText="Hide Keyword / Phrase";
-var unfilterText="Unhide Keyword / Phrase";
-var filterMessage="Enter keyword / phrase to hide:";
-var unfilterMessage="Enter keyword / phrase to unhide:";
-
-// UK US CA Language / Viewport support
-if (location.hostname == "www.amazon.co.uk" || location.hostname == "www.amazon.com" || location.hostname == "www.amazon.ca"){
-    filterMessage="Enter keyword / phrase to hide:";
-    unfilterMessage="Enter keyword / phrase to unhide:"
-    if (window.innerWidth >= 1200){
-        // For normal/wide viewport
-        hiddenText=" Hidden";
-        filteredText=" Filtered";
-        showMessage="Show hidden / filtered items";
-        hideMessage="Hide all items on this page";
-        unhideMessage="Unhide all items on this page";
-        filterText="Hide Keyword / Phrase";
-        unfilterText="Unhide Keyword / Phrase";
-    }
-    if (window.innerWidth >= 845 && window.innerWidth < 1200){
-        // For narrow viewport
-        hiddenText=" Hidden";
-        filteredText=" Filtered";
-        showMessage="Show hidden";
-        hideMessage="Hide all";
-        unhideMessage="Unhide all";
-        filterText="Hide Keyword";
-        unfilterText="Unhide Keyword";
-    }
-    if (window.innerWidth < 845){
-        // For ultra narrow viewport
-        hiddenText="H";
-        filteredText="F";
-        showMessage="";
-        hideMessage="";
-        unhideMessage="";
-        filterText="";
-        unfilterText="";
-    }
-}
-
-// FR Language / Viewport support
-if (location.hostname == "www.amazon.fr"){
-    filterMessage="Entrer le mot-clé / l'expression à masquer :";
-    unfilterMessage="Entrer le mot-clé / l'expression à afficher :"
-    if (window.innerWidth >= 1285){
-        // For normal/wide viewport
-        hiddenText=" Masqué";
-        filteredText=" Filtré";
-        showMessage="Montrer les articles masqués / filtrés";
-        hideMessage="Tout masquer sur cette page";
-        unhideMessage="Tout afficher sur cette page";
-        filterText="Masquer le mot-clé / l'expression";
-        unfilterText="Afficher le mot-clé / l'expression";
-    }
-    if (window.innerWidth >= 910 && window.innerWidth < 1285){
-        // For narrow viewport
-        hiddenText=" Masqué";
-        filteredText=" Filtré";
-        showMessage="Afficher cachés";
-        hideMessage="Tout cacher";
-        unhideMessage="Tout afficher";
-        filterText="Masquer le mot-clé";
-        unfilterText="Afficher le mot-clé";
-    }
-    if (window.innerWidth < 910){
-        // For ultra narrow viewport
-        hiddenText="M";
-        filteredText="F";
-        showMessage="";
-        hideMessage="";
-        unhideMessage="";
-        filterText="";
-        unfilterText="";
-    }
-}
-
-//Define variables for later use
-var hiddenCount = 0;
-var filteredCount = 0;
-const keywords=GM_listValues().filter((keyword) => keyword.includes("KEYWORD:"));
+var highlightSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/highlight.png";
+var unhighlightSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Unhighlight.png";
 
 //Create the HTML elements to display on the Amazon Vine page
 var messageSpan = document.createElement("span");
@@ -130,9 +117,16 @@ messageSpan.innerHTML = `
 <span class="bullet">&#x2022</span>
 <a id="hideVineItems-unhideAll">${unhideMessage}</a>
 <span class="bullet">&#x2022</span>
-<a id="hideVineItems-filterText">${filterText}</a>
-<span class="bullet">&#x2022</span>
-<a id="hideVineItems-unfilterText">${unfilterText}</a>
+<span class="dropdown">
+  <a id="hideVineItems-filtersMenu">${menuText}</a>
+  <div class="dropdown-content">
+  <a id="hideVineItems-filterText">${filterText}</a>
+  <a id="hideVineItems-unfilterText">${unfilterText}</a>
+  <hr>
+  <a id="hideVineItems-highlightText">${highlightText}</a>
+  <a id="hideVineItems-unhighlightText">${unhighlightText}</a>
+  </div>
+</span>
 `;
 
 //<p>Page width: ${window.innerWidth}</p>
@@ -142,13 +136,16 @@ messageSpan.querySelector("#hideVineItems-hideAll").addEventListener("click", (e
 messageSpan.querySelector("#hideVineItems-unhideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile.hideVineItems-hideASIN .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
 messageSpan.querySelector("#hideVineItems-filterText").addEventListener("click", displayfilterPopup);
 messageSpan.querySelector("#hideVineItems-unfilterText").addEventListener("click", displayunfilterPopup);
+messageSpan.querySelector("#hideVineItems-highlightText").addEventListener("click", displayhighlightPopup);
+messageSpan.querySelector("#hideVineItems-unhighlightText").addEventListener("click", displayunhighlightPopup);
+messageSpan.querySelector("#hideVineItems-filtersMenu").addEventListener("click", (e) => {document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.toggle("dropdown-click");})});
 document.querySelector("#vvp-items-grid-container > p").append(messageSpan);
 
-//Function to convert the storage database from old versions of the script to work with this version
+//Functions to convert the storage database from old versions of the script to work with this version
 function convertASIN(){
     if (GM_getValue("CONFIG:DBUpgraded") != true){
-        //var storage_orphan=GM_listValues().filter((keyword) => !keyword.includes("KEYWORD:") && !keyword.includes("CONFIG:") && !keyword.includes("ASIN:"));
-        var storage_orphan=GM_listValues().filter((keyword) => !keyword.match(new RegExp("^.+:.+$","gi")));
+        if (typeof gmValues == "undefined"){ var gmValues=GM_listValues();}
+        var storage_orphan=gmValues.filter((keyword) => !keyword.match(new RegExp(":","gi")));
         storage_orphan.forEach( (orphan) => {
             console.log(orphan)
             GM_setValue("ASIN:" + orphan,GM_getValue(orphan));
@@ -158,12 +155,32 @@ function convertASIN(){
     }
 }
 
+function convertFilters(){
+    if ((GM_getValue("FILTERS:") ? true : false) == false){
+        if (typeof gmValues == "undefined"){ var gmValues=GM_listValues();}
+        var newFilters = [];
+        var storage_keywords=gmValues.filter((keyword) => keyword.match(new RegExp("KEYWORD:","gi")));
+        storage_keywords.forEach( (keyword) => {
+            newFilters.push(keyword.substring(8))
+            GM_deleteValue(keyword);
+        });
+        GM_setValue("FILTERS:", JSON.stringify(newFilters));
+    }
+}
+
 //Function to display a text entry box to allow the user to create a keyword filter
 function displayfilterPopup(){
-    var textFilter=prompt(filterMessage,"");
-    if (!(textFilter == null)){
-        if (textFilter.length > 0){
-            GM_setValue("KEYWORD:"+textFilter, new Date().toJSON().slice(0,10));
+    document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.remove("dropdown-click");})
+    var response=prompt(filterMessage,"");
+    if (!(response == null )){
+        if (response.length > 0){
+            var newFilters = [];
+            var savedFilters=JSON.parse(GM_getValue("FILTERS:",null));
+            if (savedFilters != null){
+                savedFilters.forEach((filter) => {newFilters.push(filter)});
+            }
+            newFilters.push(response);
+            GM_setValue("FILTERS:", JSON.stringify(newFilters));
             location.reload();
         }
     }
@@ -171,27 +188,94 @@ function displayfilterPopup(){
 
 //Function to display a text entry box to allow the user to remove a keyword filter
 function displayunfilterPopup(){
-    var keywordstrings=(keywords.join('\r\n'))
-    var keywordPatterns=keywordstrings.replace(/KEYWORD:/g,"");
-    var textFilter=prompt(unfilterMessage + "\r\n\r\n" + keywordPatterns,"");
-    if (!(textFilter == null)){
-        if (textFilter.length > 0){
-            if (isFiltered(textFilter)){
-                GM_deleteValue("KEYWORD:"+textFilter);
+    document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.remove("dropdown-click");})
+    var numberedFilters=JSON.parse(GM_getValue("FILTERS:"));
+    if (numberedFilters.length > 0){
+        numberedFilters.forEach((filter, index) => {
+            numberedFilters[index] = `${index+1}.  ${filter}`
+        })
+        var filterStrings=(numberedFilters.join('\r\n\r\n'))
+        var response=prompt(unfilterMessage + "\r\n\r\n" + filterStrings,"");
+        if (!(response == null)){
+            if (response > 0 && response <= (numberedFilters.Length)){
+                var savedFilters=JSON.parse(GM_getValue("FILTERS:"));
+                savedFilters.splice((response-1), 1);
+                GM_setValue("FILTERS:", JSON.stringify(savedFilters));
                 location.reload();
+            } else {
+                window.alert(invalidfilterMessage)
             }
+        }
+    } else {
+        window.alert(nofiltersMessage)
+    }
+}
+
+//Function to display a text entry box to allow the user to remove a keyword filter
+function displayunhighlightPopup(){
+    document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.remove("dropdown-click");})
+    var numberedHighlights=JSON.parse(GM_getValue("HIGHLIGHTS:"));
+    if (numberedHighlights.length > 0){
+        numberedHighlights.forEach((highlight, index) => {
+            numberedHighlights[index] = `${index+1}.  ${highlight}`
+        })
+        var highlightStrings=(numberedHighlights.join('\r\n\r\n'))
+        var response=prompt(unhighlightMessage + "\r\n\r\n" + highlightStrings,"");
+        if (!(response == null)){
+            if (response > 0 && response <= (numberedHighlights.length)){
+                var savedHighlights=JSON.parse(GM_getValue("HIGHLIGHTS:"));
+                savedHighlights.splice((response-1), 1);
+                GM_setValue("HIGHLIGHTS:", JSON.stringify(savedHighlights));
+                location.reload();
+            } else {
+                window.alert(invalidhighlightMessage)
+            }
+        }
+    } else {
+        window.alert(nohighlightsMessage)
+    }
+}
+
+//Function to display a text entry box to allow the user to create a keyword highlight
+function displayhighlightPopup(){
+    document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.remove("dropdown-click");})
+    var response=prompt(highlightMessage,"");
+    if (!(response == null )){
+        if (response.length > 0){
+            var newHighlights = [];
+            var savedHighlights=JSON.parse(GM_getValue("HIGHLIGHTS:",null));
+            if (savedHighlights != null){
+                savedHighlights.forEach((highlight) => {newHighlights.push(highlight)});
+            }
+            newHighlights.push(response);
+            GM_setValue("HIGHLIGHTS:", JSON.stringify(newHighlights));
+            location.reload();
         }
     }
 }
 
-//Function to check whether a keyword filter already exists in the storage database
+//Function to check whether a keyword highlight already exists in the storage database
 function isFiltered(keyword) {
     return GM_getValue("KEYWORD:"+keyword) ? true : false;
 }
 
 //Function to search the keywords in the storage database and see if a product matches any of them
-function containsText(productDescription) {
-    return keywords.some(keyword => productDescription.match(new RegExp(keyword.substring(8),"gi"))) ? true : false
+function containsKeyword(productDescription) {
+    var savedKeywords=JSON.parse(GM_getValue("FILTERS:",null));
+    if (savedKeywords != null){
+        return savedKeywords.some(keyword => productDescription.match(new RegExp(keyword,"gi"))) ? true : false
+    } else {
+        return false
+    }
+}
+
+function containsHighlight(productDescription) {
+    var savedHighlights=JSON.parse(GM_getValue("HIGHLIGHTS:",null));
+    if (savedHighlights != null){
+    return savedHighlights.some(highlight => productDescription.match(new RegExp(highlight,"gi"))) ? true : false
+    } else {
+        return false
+    }
 }
 
 //Function to update the hidden and filtered count numbers on the Amazon Vine page
@@ -230,6 +314,7 @@ function addHideLink(tile, ASIN) {
 
 //Convert the database to v2.0 format if needed
 convertASIN()
+convertFilters()
 
 //Add the correct classes to products so they behave correctly
 document.querySelectorAll(".vvp-item-tile").forEach( (tile) => {
@@ -241,14 +326,25 @@ document.querySelectorAll(".vvp-item-tile").forEach( (tile) => {
             tile.classList.add("hideVineItems-hideASIN");
             hiddenCount += 1;
         } else {
-            if (containsText(linkText)){
-                tile.classList.add("hideVineItems-filterProduct");
-                filteredCount += 1;
+            if (containsHighlight(linkText)){
+                tile.classList.add("hideVineItems-highlightProduct");
+            } else {
+                if (containsKeyword(linkText)){
+                    tile.classList.add("hideVineItems-filterProduct");
+                    filteredCount += 1;
+                }
             }
         }
         addHideLink(tile, ASIN);
     }
 });
+
+switch(location.hostname){
+    case "www.amazon.fr":
+        hiddenText=`${hiddenCount > 1 ? " Masqués" : " Masqué"}`;
+        filteredText=`${filteredCount > 1 ? " Filtrés" : " Filtré"}`;
+        break;
+}
 
 //Update the hidden and filtered count numbers on the Amazon Vine page
 updateCount();
@@ -256,12 +352,35 @@ updateCount();
 //Create stylesheet to customize the layout of the additional html elements
 GM_addStyle(`
 
-#hideVineItems-hideAll, #hideVineItems-unhideAll, #hideVineItems-filterText, #hideVineItems-unfilterText {
-  color: #0F1111;
+.a-pagination {
+  margin-top:5px; !important
 }
 
-#hideVineItems-hideAll:hover, #hideVineItems-unhideAll:hover, hideVineItems-filterText:hover, #hideVineItems-unfilterText:hover {
-  color: #007185;
+#vvp-items-grid .vvp-item-tile {
+  border: 1px solid #cccccc !important;
+}
+
+#vvp-items-grid {
+  grid-gap:5px !important;
+}
+
+#vvp-items-grid .vvp-item-tile .vvp-item-tile-content {
+    margin-top:0 !important;
+    margin-bottom:5px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+}
+
+.vvp-item-tile-content img {
+  padding-top:12px !important;
+}
+
+#hideVineItems-hideAll, #hideVineItems-unhideAll, #hideVineItems-filtersMenu {
+  color:${textcolour};
+}
+
+#hideVineItems-hideAll:hover, #hideVineItems-unhideAll:hover, #hideVineItems-filtersMenu:hover {
+  color: #C7511F;
   text-decoration: underline;
 }
 
@@ -279,7 +398,7 @@ GM_addStyle(`
   height: 17px !important;
   overflow: hidden;
   top: 2px;
-  right: 2px;
+  right: 0px;
   background-color: rgba(0,0,0,0.0);
   padding: 0;
   background: url("${hideSymbol}");
@@ -310,6 +429,14 @@ GM_addStyle(`
   opacity: 50%;
 }
 
+.hideVineItems-highlightProduct {
+  background-color:yellow;
+}
+
+.hideVineItems-highlightProduct img {
+ opacity:70%
+}
+
 #hideVineItems-hideAll {
   background: url("${hideSymbol}");
   background-repeat: no-repeat;
@@ -328,15 +455,37 @@ GM_addStyle(`
   background: url("${filterSymbol}");
   background-repeat: no-repeat;
   background-size:contain;
-  padding-left:30px;
+  padding-left:40px;
 }
 
 #hideVineItems-unfilterText {
   background: url("${unfilterSymbol}");
   background-repeat: no-repeat;
   background-size:contain;
+  padding-left:40px;
+}
+
+#hideVineItems-highlightText {
+  background: url("${highlightSymbol}");
+  background-repeat: no-repeat;
+  background-size:contain;
+  padding-left:40px;
+}
+
+#hideVineItems-unhighlightText {
+  background: url("${unhighlightSymbol}");
+  background-repeat: no-repeat;
+  background-size:contain;
+  padding-left:40px;
+}
+
+#hideVineItems-filtersMenu {
+  background: url("${unfilterSymbol}");
+  background-repeat: no-repeat;
+  background-size:contain;
   padding-left:30px;
 }
+
 
 .bullet {
   margin-left:10px;
@@ -404,4 +553,46 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-`);
+
+.dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.dropdown-content {
+  background-color: ${bgcolour};
+  display: none;
+  position: absolute;
+  width: max-content;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index:5000;
+  padding:5px;
+  border: 0.5px solid ${textcolour};
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown .dropdown-click {
+  display: block;
+}
+
+.dropdown-content a {
+  display: block;
+  color: ${textcolour};
+  text-decoration: none;
+  margin:5px;
+  width: auto
+}
+
+.dropdown-content a:hover {
+  color: #C7511F;
+}
+
+hr {
+  margin-top:10px;
+}
+
+`);}}
