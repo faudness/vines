@@ -21,7 +21,7 @@
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     2.1
+// @version     2.1.1
 // @description Adds additional options to let you hide products in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
 
@@ -35,17 +35,16 @@ const bgcolour=window.getComputedStyle(document.body).getPropertyValue('backgrou
 const textcolour=window.getComputedStyle(document.body).getPropertyValue('color');
 var hiddenText,filteredText,filterMessage,unfilterMessage,highlightMessage,unhighlightMessage,
     filterText,unfilterText,highlightText,unhighlightText,menuText,showMessage,hideMessage,
-    unhideMessage,nofiltersMessage,nohighlightsMessage,invalidfilterMessage,invalidhighlightMessage
+    unhideMessage,nofiltersMessage,nohighlightsMessage,invalidfilterMessage,invalidhighlightMessage,
+    moreText,nomoreText
 
 // UK US CA Language / Viewport support
 switch(location.hostname){
     case "www.amazon.fr":
         hiddenText=`${hiddenCount > 1 ? " Masqués" : " Masqué"}`;
         filteredText=`${filteredCount > 1 ? " Filtrés" : " Filtré"}`;
-        filterMessage="Entrer le mot-clé / l'expression à masquer :";
-        unfilterMessage = "Entrer le numéro du mot-clé / de l'expression à afficher :";
-        highlightMessage = "Entrer le mot-clé / l'expression à mettre en évidence :";
-        unhighlightMessage = "Entrer le numéro du mot-clé / de l'expression à ne plus mettre en évidence :";
+        filterMessage="Entrer un mot-clé, une phrase ou une expression régulière";
+        unfilterMessage="Entrez le numéro de l'élément à supprimer, ou tapez 'plus' ou 'p' pour en afficher davantage :";
         filterText="Masquer le mot-clé / l'expression";
         unfilterText="Afficher le mot-clé / l'expression";
         highlightText = "Mettre en évidence le mot-clé / l'expression";
@@ -54,10 +53,10 @@ switch(location.hostname){
         showMessage="Montrer les articles masqués / filtrés";
         hideMessage="Tout masquer sur cette page";
         unhideMessage="Tout afficher sur cette page";
-        nofiltersMessage = "Il n'y a pas de filtres à supprimer";
-        nohighlightsMessage = "Il n'y a pas de mises en évidence à supprimer";
-        invalidfilterMessage = "Numéro de filtre invalide saisi";
-        invalidhighlightMessage = "Numéro de mise en évidence invalide saisi";
+        nofiltersMessage="Il n'y a aucun élément à supprimer";
+        invalidfilterMessage="Numéro d'index invalide saisi";
+        moreText="plus";
+        nomoreText="il n'y a plus d'éléments à afficher";
 
         // For narrow viewport
         if (window.innerWidth < 1000){
@@ -71,10 +70,8 @@ switch(location.hostname){
     default:
         hiddenText=" Hidden";
         filteredText=" Filtered";
-        filterMessage="Enter keyword / phrase to hide:";
-        unfilterMessage="Enter the number of the keyword / phrase to unhide:";
-        highlightMessage="Enter keyword / phrase to highlight:";
-        unhighlightMessage="Enter the number of the keyword / phrase to unhighlight:";
+        filterMessage="Enter a keyword, phrase or regular expression";
+        unfilterMessage="Enter the number of the item to remove, or type 'more' or 'm' to show more:";
         filterText="Hide Keyword / Phrase";
         unfilterText="Unhide Keyword / Phrase";
         highlightText="Highlight Keyword / Phrase";
@@ -83,10 +80,10 @@ switch(location.hostname){
         showMessage="Show Hidden / Filtered";
         hideMessage="Hide all items on this page";
         unhideMessage="Unhide all items on this page";
-        nofiltersMessage="There are no filters to remove";
-        nohighlightsMessage="There are no highlights to remove";
-        invalidfilterMessage="Invalid filter number entered";
-        invalidhighlightMessage="Invalid highlight number entered";
+        nofiltersMessage="There are no items to remove";
+        invalidfilterMessage="Invalid index number entered";
+        moreText="more";
+        nomoreText="there are no more items to view";
 
         // For narrow viewport
         if (window.innerWidth < 1000){
@@ -134,10 +131,10 @@ messageSpan.innerHTML = `
 messageSpan.querySelector("#hideVineItems-togglePage").addEventListener("click", (e) => {document.querySelector(":root").classList.toggle("hideVineItems-showHidden");})
 messageSpan.querySelector("#hideVineItems-hideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile:not(.hideVineItems-hideASIN) .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
 messageSpan.querySelector("#hideVineItems-unhideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile.hideVineItems-hideASIN .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
-messageSpan.querySelector("#hideVineItems-filterText").addEventListener("click", displayfilterPopup);
-messageSpan.querySelector("#hideVineItems-unfilterText").addEventListener("click", displayunfilterPopup);
-messageSpan.querySelector("#hideVineItems-highlightText").addEventListener("click", displayhighlightPopup);
-messageSpan.querySelector("#hideVineItems-unhighlightText").addEventListener("click", displayunhighlightPopup);
+messageSpan.querySelector("#hideVineItems-filterText").addEventListener("click", function() {displayaddPopup("FILTERS")});
+messageSpan.querySelector("#hideVineItems-unfilterText").addEventListener("click", function() {displayremovePopup("FILTERS")});
+messageSpan.querySelector("#hideVineItems-highlightText").addEventListener("click", function () {displayaddPopup("HIGHLIGHTS")});
+messageSpan.querySelector("#hideVineItems-unhighlightText").addEventListener("click", function() {displayremovePopup("HIGHLIGHTS")});
 messageSpan.querySelector("#hideVineItems-filtersMenu").addEventListener("click", (e) => {document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.toggle("dropdown-click");})});
 document.querySelector("#vvp-items-grid-container > p").append(messageSpan);
 
@@ -169,110 +166,95 @@ function convertFilters(){
 }
 
 //Function to display a text entry box to allow the user to create a keyword filter
-function displayfilterPopup(){
+function displayaddPopup(filtertype){
     document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.remove("dropdown-click");})
     var response=prompt(filterMessage,"");
     if (!(response == null )){
         if (response.length > 0){
             var newFilters = [];
-            var savedFilters=JSON.parse(GM_getValue("FILTERS:",null));
+            var savedFilters=JSON.parse(GM_getValue(filtertype+":",null));
             if (savedFilters != null){
                 savedFilters.forEach((filter) => {newFilters.push(filter)});
             }
             newFilters.push(response);
-            GM_setValue("FILTERS:", JSON.stringify(newFilters));
+            GM_setValue(filtertype+":", JSON.stringify(newFilters));
             location.reload();
         }
     }
 }
 
+
 //Function to display a text entry box to allow the user to remove a keyword filter
-function displayunfilterPopup(){
+function displayremovePopup(filtertype){
     document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.remove("dropdown-click");})
-    var numberedFilters=JSON.parse(GM_getValue("FILTERS:"));
+    var numberedFilters=JSON.parse(GM_getValue(filtertype+":"));
     if (numberedFilters.length > 0){
-        numberedFilters.forEach((filter, index) => {
-            numberedFilters[index] = `${index+1}.  ${filter}`
-        })
-        var filterStrings=(numberedFilters.join('\r\n\r\n'))
-        var response=prompt(unfilterMessage + "\r\n\r\n" + filterStrings,"");
-        if (!(response == null)){
-            if (response > 0 && response <= (numberedFilters.Length)){
-                var savedFilters=JSON.parse(GM_getValue("FILTERS:"));
-                savedFilters.splice((response-1), 1);
-                GM_setValue("FILTERS:", JSON.stringify(savedFilters));
-                location.reload();
-            } else {
-                window.alert(invalidfilterMessage)
+        // Initialize the start and end indices of the current batch of items
+        var start = 0;
+        var end = 20;
+        // Use a loop to keep displaying the items until the user cancels or deletes all items
+        while (numberedFilters.length > 0) {
+            // Adjust the end index if it exceeds the length of the array
+            if (end > numberedFilters.length) {
+                end = numberedFilters.length;
             }
+            if (start < numberedFilters.length) {
+                // Display the current batch of items to the user in a prompt dialog
+                var message = unfilterMessage + "\r\n\r\n";
+                var filter;
+                for (var i = start; i < end; i++) {
+                    if (numberedFilters[i].length >=60){
+                        filter=numberedFilters[i].substring(0,56)+" ..."
+                    } else {
+                        filter=numberedFilters[i]
+                    }
+                    message += (i + 1) + ". " + filter + "\r\n";
+                }
+
+                var response = prompt(message,"");
+                // Check the user's response
+                if (response == null) {
+                    // If the user cancels, break the loop
+                    break;
+                } else if (response == `${moreText}` || response == moreText.substring(0,1)) {
+                    // If the user types 'more', move to the next batch of items
+                    start += 20;
+                    end += 20;
+                } else {
+                    // If the user types a number, try to parse it as an integer
+                    var index = parseInt(response);
+                    // If the index is valid, delete the corresponding item from the array
+                    if (index >= start + 1 && index <= end) {
+                        numberedFilters.splice(index - 1, 1);
+                        // Adjust the end index accordingly
+                        end--;
+                        break;
+                    } else {
+                        // If the index is invalid, alert the user
+                        alert(invalidfilterMessage);
+                    }
+                }
+            } else {
+                alert(`${nomoreText}`)
+                response=null
+                break;
+            }
+        }
+        // Update the saved filters and reload the page
+        if (response != null){
+            GM_setValue(filtertype+":", JSON.stringify(numberedFilters));
+            location.reload();
         }
     } else {
         window.alert(nofiltersMessage)
     }
 }
 
-//Function to display a text entry box to allow the user to remove a keyword filter
-function displayunhighlightPopup(){
-    document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.remove("dropdown-click");})
-    var numberedHighlights=JSON.parse(GM_getValue("HIGHLIGHTS:"));
-    if (numberedHighlights.length > 0){
-        numberedHighlights.forEach((highlight, index) => {
-            numberedHighlights[index] = `${index+1}.  ${highlight}`
-        })
-        var highlightStrings=(numberedHighlights.join('\r\n\r\n'))
-        var response=prompt(unhighlightMessage + "\r\n\r\n" + highlightStrings,"");
-        if (!(response == null)){
-            if (response > 0 && response <= (numberedHighlights.length)){
-                var savedHighlights=JSON.parse(GM_getValue("HIGHLIGHTS:"));
-                savedHighlights.splice((response-1), 1);
-                GM_setValue("HIGHLIGHTS:", JSON.stringify(savedHighlights));
-                location.reload();
-            } else {
-                window.alert(invalidhighlightMessage)
-            }
-        }
-    } else {
-        window.alert(nohighlightsMessage)
-    }
-}
-
-//Function to display a text entry box to allow the user to create a keyword highlight
-function displayhighlightPopup(){
-    document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.remove("dropdown-click");})
-    var response=prompt(highlightMessage,"");
-    if (!(response == null )){
-        if (response.length > 0){
-            var newHighlights = [];
-            var savedHighlights=JSON.parse(GM_getValue("HIGHLIGHTS:",null));
-            if (savedHighlights != null){
-                savedHighlights.forEach((highlight) => {newHighlights.push(highlight)});
-            }
-            newHighlights.push(response);
-            GM_setValue("HIGHLIGHTS:", JSON.stringify(newHighlights));
-            location.reload();
-        }
-    }
-}
-
-//Function to check whether a keyword highlight already exists in the storage database
-function isFiltered(keyword) {
-    return GM_getValue("KEYWORD:"+keyword) ? true : false;
-}
-
 //Function to search the keywords in the storage database and see if a product matches any of them
-function containsKeyword(productDescription) {
-    var savedKeywords=JSON.parse(GM_getValue("FILTERS:",null));
+function containsKeyword(filtertype,productDescription) {
+    var savedKeywords=JSON.parse(GM_getValue(filtertype+":",null));
     if (savedKeywords != null){
         return savedKeywords.some(keyword => productDescription.match(new RegExp(keyword,"gi"))) ? true : false
-    } else {
-        return false
-    }
-}
-
-function containsHighlight(productDescription) {
-    var savedHighlights=JSON.parse(GM_getValue("HIGHLIGHTS:",null));
-    if (savedHighlights != null){
-    return savedHighlights.some(highlight => productDescription.match(new RegExp(highlight,"gi"))) ? true : false
     } else {
         return false
     }
@@ -326,10 +308,10 @@ document.querySelectorAll(".vvp-item-tile").forEach( (tile) => {
             tile.classList.add("hideVineItems-hideASIN");
             hiddenCount += 1;
         } else {
-            if (containsHighlight(linkText)){
+            if (containsKeyword("HIGHLIGHTS",linkText)){
                 tile.classList.add("hideVineItems-highlightProduct");
             } else {
-                if (containsKeyword(linkText)){
+                if (containsKeyword("FILTERS",linkText)){
                     tile.classList.add("hideVineItems-filterProduct");
                     filteredCount += 1;
                 }
