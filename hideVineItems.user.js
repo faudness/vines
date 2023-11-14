@@ -21,22 +21,29 @@
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     2.1.1
+// @version     2.1.2
 // @description Adds additional options to let you hide products in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
 
+// Add a style before the page loads to hide the product grid, to prevent the redraw being visible
+GM_addStyle(`
+#vvp-items-grid {
+  display:none !important;
+}
+`);
+
+// Run the rest of the code after the page loads, but before the images load, to improve speed
 document.onreadystatechange = function () {if (document.readyState === "interactive") {
 
 //Define variables for later use
 var hiddenCount = 0;
 var filteredCount = 0;
-//var gmValues=GM_listValues();
 const bgcolour=window.getComputedStyle(document.body).getPropertyValue('background-color');
 const textcolour=window.getComputedStyle(document.body).getPropertyValue('color');
 var hiddenText,filteredText,filterMessage,unfilterMessage,highlightMessage,unhighlightMessage,
     filterText,unfilterText,highlightText,unhighlightText,menuText,showMessage,hideMessage,
     unhideMessage,nofiltersMessage,nohighlightsMessage,invalidfilterMessage,invalidhighlightMessage,
-    moreText,nomoreText
+    moreText,nomoreText,deleteText
 
 // UK US CA Language / Viewport support
 switch(location.hostname){
@@ -57,6 +64,7 @@ switch(location.hostname){
         invalidfilterMessage="Numéro d'index invalide saisi";
         moreText="plus";
         nomoreText="il n'y a plus d'éléments à afficher";
+        deleteText="Supprimer l'élément";
 
         // For narrow viewport
         if (window.innerWidth < 1000){
@@ -83,7 +91,8 @@ switch(location.hostname){
         nofiltersMessage="There are no items to remove";
         invalidfilterMessage="Invalid index number entered";
         moreText="more";
-        nomoreText="there are no more items to view";
+        nomoreText="There are no more items to show";
+        deleteText="Delete the item";
 
         // For narrow viewport
         if (window.innerWidth < 1000){
@@ -183,11 +192,11 @@ function displayaddPopup(filtertype){
     }
 }
 
-
 //Function to display a text entry box to allow the user to remove a keyword filter
 function displayremovePopup(filtertype){
     document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.remove("dropdown-click");})
     var numberedFilters=JSON.parse(GM_getValue(filtertype+":"));
+    var originalFilters=numberedFilters.slice()
     if (numberedFilters.length > 0){
         // Initialize the start and end indices of the current batch of items
         var start = 0;
@@ -242,8 +251,11 @@ function displayremovePopup(filtertype){
         }
         // Update the saved filters and reload the page
         if (response != null){
-            GM_setValue(filtertype+":", JSON.stringify(numberedFilters));
-            location.reload();
+            var strdelete = confirm(`${deleteText} '${originalFilters[response-1]}'?`);
+            if (strdelete == true) {
+                GM_setValue(filtertype+":", JSON.stringify(numberedFilters));
+                location.reload();
+            }
         }
     } else {
         window.alert(nofiltersMessage)
@@ -575,6 +587,10 @@ input:checked + .slider:before {
 
 hr {
   margin-top:10px;
+}
+
+#vvp-items-grid {
+  display:grid !important;
 }
 
 `);}}
