@@ -1,4 +1,4 @@
-# VineToolsUK
+# Vine Tools UK
 Some additional userscript based styles to change the look and feel of Amazon Vine. Download a userscript manager such as TamperMonkey, GreaseMonkey or ViolentMonkey and then click on the download links below.
 
 
@@ -27,6 +27,6 @@ The tabsonSearchPage.user.js script duplicates the RFY, AFA & AI tab bar that ap
 
 
 ## Spaced Product Tiles
-The spacedProducttiles.user.js script adds a light border and spacing between each product tile to improve readability, especially when used in conjuction with the Small Items style.
+The spacedProductTiles.user.js script adds a light border and spacing between each product tile to improve readability, especially when used in conjuction with the Small Items style.
 
 [DOWNLOAD](http://raw.githubusercontent.com/MD2K23/VineToolsUK/master/spacedProductTiles.user.js)
