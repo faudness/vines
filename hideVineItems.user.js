@@ -14,7 +14,7 @@
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     2.1.3
+// @version     2.1.4
 // @description Adds additional options to let you hide products in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
 
@@ -333,6 +333,12 @@ switch(location.hostname){
         hiddenText=`${hiddenCount > 1 ? " Masqués" : " Masqué"}`;
         filteredText=`${filteredCount > 1 ? " Filtrés" : " Filtré"}`;
         break;
+}
+
+// Show hidden items on Search page
+if ((location.search).includes("search=")){
+    document.getElementById("hideVineItems-togglePage").checked=true;
+    document.querySelector(":root").classList.toggle("hideVineItems-showHidden")
 }
 
 //Update the hidden and filtered count numbers on the Amazon Vine page
