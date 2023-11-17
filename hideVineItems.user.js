@@ -3,25 +3,18 @@
 // @namespace   https://github.com/MD2K23/VineToolsUK
 // @run-at      document-start
 // @match       https://www.amazon.co.uk/vine/vine-items*
-// @exclude     https://www.amazon.co.uk/vine/vine-items*search=*
 // @match       https://www.amazon.com/vine/vine-items*
-// @exclude     https://www.amazon.com/vine/vine-items*search=*
 // @match       https://www.amazon.ca/vine/vine-items*
-// @exclude     https://www.amazon.ca/vine/vine-items*search=*
 // @match       https://www.amazon.fr/vine/vine-items*
-// @exclude     https://www.amazon.fr/vine/vine-items*search=*
 // @match       https://www.amazon.de/vine/vine-items*
-// @exclude     https://www.amazon.de/vine/vine-items*search=*
 // @match       https://www.amazon.it/vine/vine-items*
-// @exclude     https://www.amazon.it/vine/vine-items*search=*
 // @match       https://www.amazon.es/vine/vine-items*
-// @exclude     https://www.amazon.es/vine/vine-items*search=*
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     2.1.2
+// @version     2.1.3
 // @description Adds additional options to let you hide products in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
 
@@ -39,6 +32,7 @@ document.onreadystatechange = function () {if (document.readyState === "interact
 var hiddenCount = 0;
 var filteredCount = 0;
 const bgcolour=window.getComputedStyle(document.body).getPropertyValue('background-color');
+    console.log(bgcolour);
 const textcolour=window.getComputedStyle(document.body).getPropertyValue('color');
 var hiddenText,filteredText,filterMessage,unfilterMessage,highlightMessage,unhighlightMessage,
     filterText,unfilterText,highlightText,unhighlightText,menuText,showMessage,hideMessage,
@@ -333,6 +327,7 @@ document.querySelectorAll(".vvp-item-tile").forEach( (tile) => {
     }
 });
 
+// Change plural words for French
 switch(location.hostname){
     case "www.amazon.fr":
         hiddenText=`${hiddenCount > 1 ? " Masqués" : " Masqué"}`;
@@ -592,5 +587,4 @@ hr {
 #vvp-items-grid {
   display:grid !important;
 }
-
 `);}}
