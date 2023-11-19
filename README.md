@@ -30,3 +30,10 @@ The tabsonSearchPage.user.js script duplicates the RFY, AFA & AI tab bar that ap
 The spacedProductTiles.user.js script adds a light border and spacing between each product tile to improve readability, especially when used in conjuction with the Small Items style.
 
 [DOWNLOAD](http://raw.githubusercontent.com/MD2K23/VineToolsUK/master/spacedProductTiles.user.js)
+
+
+## Page Links into Menu
+The pagelinksintoMenu.user.js script removes all the page links at the top of the page and places them in a menu next to the RFY button instead, saving a lot of vertical space.
+
+[DOWNLOAD](http://raw.githubusercontent.com/MD2K23/VineToolsUK/master/pagelinksintoMenu.user.js)
+

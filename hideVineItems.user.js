@@ -14,10 +14,9 @@
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     2.1.4
+// @version     2.1.5
 // @description Adds additional options to let you hide products in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
 // ==/UserScript==
-
 // Add a style before the page loads to hide the product grid, to prevent the redraw being visible
 GM_addStyle(`
 #vvp-items-grid {
@@ -107,12 +106,11 @@ var unhighlightSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/mast
 
 //Create the HTML elements to display on the Amazon Vine page
 var messageSpan = document.createElement("span");
-messageSpan.classList.add("hideVineItems-message");
 messageSpan.innerHTML = `
 <span id="hideVineItems-count"></span>
 <span class="bullet">&#x2022</span>
 <span id="hideVineItems-toggleText">${showMessage}</span>
-<label class="switch"><input id="hideVineItems-togglePage" type="checkbox"><span class="slider round"></span></label><br>
+<label class="switch"><input id="hideVineItems-togglePage" type="checkbox" autocomplete="off"><span class="slider round"></span></label><br>
 <a id="hideVineItems-hideAll">${hideMessage}</a>
 <span class="bullet">&#x2022</span>
 <a id="hideVineItems-unhideAll">${unhideMessage}</a>
@@ -129,9 +127,7 @@ messageSpan.innerHTML = `
 </span>
 `;
 
-//<p>Page width: ${window.innerWidth}</p>
-
-messageSpan.querySelector("#hideVineItems-togglePage").addEventListener("click", (e) => {document.querySelector(":root").classList.toggle("hideVineItems-showHidden");})
+messageSpan.querySelector("#hideVineItems-togglePage").addEventListener("change", toggleHidden)
 messageSpan.querySelector("#hideVineItems-hideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile:not(.hideVineItems-hideASIN) .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
 messageSpan.querySelector("#hideVineItems-unhideAll").addEventListener("click", (e) => {document.querySelectorAll(".vvp-item-tile.hideVineItems-hideASIN .hideVineItems-toggleASIN").forEach( (hideLink) => {hideLink.click();})});
 messageSpan.querySelector("#hideVineItems-filterText").addEventListener("click", function() {displayaddPopup("FILTERS")});
@@ -140,6 +136,15 @@ messageSpan.querySelector("#hideVineItems-highlightText").addEventListener("clic
 messageSpan.querySelector("#hideVineItems-unhighlightText").addEventListener("click", function() {displayremovePopup("HIGHLIGHTS")});
 messageSpan.querySelector("#hideVineItems-filtersMenu").addEventListener("click", (e) => {document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.toggle("dropdown-click");})});
 document.querySelector("#vvp-items-grid-container > p").append(messageSpan);
+
+// Function to toggle hidden item status
+function toggleHidden(){
+    if (document.querySelector("#hideVineItems-togglePage").checked == true){
+        document.querySelector(":root").classList.add("hideVineItems-showHidden");
+    } else {
+        document.querySelector(":root").classList.remove("hideVineItems-showHidden");
+    }
+}
 
 //Functions to convert the storage database from old versions of the script to work with this version
 function convertASIN(){
@@ -346,30 +351,6 @@ updateCount();
 
 //Create stylesheet to customize the layout of the additional html elements
 GM_addStyle(`
-
-.a-pagination {
-  margin-top:5px; !important
-}
-
-#vvp-items-grid .vvp-item-tile {
-  border: 1px solid #cccccc !important;
-}
-
-#vvp-items-grid {
-  grid-gap:5px !important;
-}
-
-#vvp-items-grid .vvp-item-tile .vvp-item-tile-content {
-    margin-top:0 !important;
-    margin-bottom:5px !important;
-    margin-left:auto !important;
-    margin-right:auto !important;
-}
-
-.vvp-item-tile-content img {
-  padding-top:12px !important;
-}
-
 #hideVineItems-hideAll, #hideVineItems-unhideAll, #hideVineItems-filtersMenu {
   color:${textcolour};
 }

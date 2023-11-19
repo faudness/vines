@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name        MD2K23 Vine Styles - RFY, AFA & AI Tabs on Search
 // @namespace   https://github.com/MD2K23/VineToolsUK
-// @match       https://www.amazon.co.uk/vine/*
-// @match       https://www.amazon.com/vine/*
-// @match       https://www.amazon.ca/vine/*
-// @match       https://www.amazon.fr/vine/*
-// @match       https://www.amazon.de/vine/*
-// @match       https://www.amazon.it/vine/*
-// @match       https://www.amazon.es/vine*
-// @version     1.0.1
+// @match       https://www.amazon.co.uk/vine/vine-items*
+// @match       https://www.amazon.com/vine/vine-items*
+// @match       https://www.amazon.ca/vine/vine-items*
+// @match       https://www.amazon.fr/vine/vine-items*
+// @match       https://www.amazon.de/vine/vine-items*
+// @match       https://www.amazon.it/vine/vine-items*
+// @match       https://www.amazon.es/vine/vine-items*
+// @version     1.0.2
 // @description Adds the RFY, AFA amnd AI tabs to the Search page on the Amazon Vine store
 // ==/UserScript==
 
