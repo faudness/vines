@@ -8,7 +8,7 @@
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     1.0
+// @version     1.1
 // @description Vines
 // ==/UserScript==
 
