@@ -8,8 +8,11 @@
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     1.2
+// @version     1.3
 // @description Vines
+// @homepageURL https://github.com/faudness/Vines
+// @updateURL https://raw.githubusercontent.com/faudness/Vines/master/hideVineItems.user.js
+// @downloadURL https://raw.githubusercontent.com/faudness/Vines/master/hideVineItems.user.js
 // ==/UserScript==
 
 var A = [
