@@ -8,9 +8,9 @@
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     1.4
-// @updateURL https://raw.githubusercontent.com/faudness/Vines/master/hideVineItems.user.js
-// @downloadURL https://raw.githubusercontent.com/faudness/Vines/master/hideVineItems.user.js
+// @version     1.0
+// @updateURL https://github.com/faudness/vines/raw/main/hideVineItems.user.js
+// @downloadURL https://github.com/faudness/vines/raw/main/hideVineItems.user.js
 // ==/UserScript==
 
 var A = [
@@ -28,7 +28,7 @@ var A = [
 'B0BGN3F54W',
 'B0BHHL8XK9',
 'B0BJ1P5Q6N',
-''
+'B0BTM5YF4K'
         ];
 
 GM_addStyle(`
