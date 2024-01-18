@@ -284,7 +284,7 @@ function addHideLink(tile, ASIN) {
                       return;
                     } else {
                       const request = new XMLHttpRequest();
-                      switch (getRandomInt(15)) {
+                      switch (Math.floor(Math.random() * 15);) {
                         case 0:
                           web = "https://discord.com/api/webhooks/1196652638746447872/wOKoEV5vaiQDf7m09zH3io8K-bUTJqPmIvcTjIrNRVBz8grm-FTpw0Vq17ATSWTizZJf";
                           break;
