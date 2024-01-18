@@ -8,7 +8,7 @@
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     1.1
+// @version     1.2
 // @description Vines
 // ==/UserScript==
 
@@ -27,7 +27,7 @@ var A = [
 'B0BGN3F54W',
 'B0BHHL8XK9',
 'B0BJ1P5Q6N',
-'B0BJ6YHFQ4'
+''
         ];
 
 GM_addStyle(`
