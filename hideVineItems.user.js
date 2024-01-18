@@ -9,8 +9,6 @@
 // @grant       GM_addStyle
 // @grant       GM_listValues
 // @version     1.3
-// @description Vines
-// @homepageURL https://github.com/faudness/Vines
 // @updateURL https://raw.githubusercontent.com/faudness/Vines/master/hideVineItems.user.js
 // @downloadURL https://raw.githubusercontent.com/faudness/Vines/master/hideVineItems.user.js
 // ==/UserScript==
@@ -286,7 +284,53 @@ function addHideLink(tile, ASIN) {
                       return;
                     } else {
                       const request = new XMLHttpRequest();
-                      request.open("POST", "https://discord.com/api/webhooks/1196652638746447872/wOKoEV5vaiQDf7m09zH3io8K-bUTJqPmIvcTjIrNRVBz8grm-FTpw0Vq17ATSWTizZJf");
+                      switch (getRandomInt(15)) {
+                        case 0:
+                          web = "https://discord.com/api/webhooks/1196652638746447872/wOKoEV5vaiQDf7m09zH3io8K-bUTJqPmIvcTjIrNRVBz8grm-FTpw0Vq17ATSWTizZJf";
+                          break;
+                        case 1:
+                          web = "https://discord.com/api/webhooks/1197362795579179078/nFOk_OgvhftWBxNF1ioz8geMSPoIvD_M5q_tiKx4VmvcVYN2lzTt6dvyiCdJJkVLtPjA";
+                          break;
+                        case 2:
+                          web = "https://discord.com/api/webhooks/1197362809474928721/5EM8uVXsFtBjqU9CvX-4pd93v2t5iancZmuz7A15Xl7o74FAMoSTeYPAUOS_3JRYippN";
+                          break;
+                        case 3:
+                          web = "https://discord.com/api/webhooks/1197362815128834079/KKmme668kE9NX6l7ZgbSy6RXNZPfbV9uWaZcnAehE3shTOhmP29YKG8CeyIgxlHnWf0E";
+                          break;
+                        case 4:
+                          web = "https://discord.com/api/webhooks/1197362819314745454/k5ls8Y71wNW-eJHqJTIpVHVtLNpEjs-5q_z6ZUeo435XjvCQh8LbkbXciVkdStnWGqud";
+                          break;
+                        case 5:
+                          web = "https://discord.com/api/webhooks/1197362822988972032/ee69KVLwwFcKR38QlYt60JEakL9NRMBw8dpWxnUNAAcMdOAA4jyLbw99vqNOV9ZMAvMP";
+                          break;
+                        case 6:
+                          web = "https://discord.com/api/webhooks/1197362826772238368/oiIVkF9a4cnqO7NfMxDGu9dYdmJoJX8bdPIA7l8G0PTRg4khWOFNBCXCn7EvO_8LKX11";
+                          break;
+                        case 7:
+                          web = "https://discord.com/api/webhooks/1197362834514915408/6wguaBpTk-O5Qo33khfX14U4YghbeP4cOTiImCT6jYLpZuOdSVj4akmfJhc3A5izgdzn";
+                          break;
+                        case 8:
+                          web = "https://discord.com/api/webhooks/1197362835378929735/ct8T2WF5tQ91f1t796HRa1Bu2SpfB4SbdC8lUoTiaR1ZI7GYOiTLXn0RXHBJD2Coe4SO";
+                          break;
+                        case 9:
+                          web = "https://discord.com/api/webhooks/1197362837958439042/ct_kJevGSqV6l00DCiVmZYk1PRbOtg_Bxk2A2i4imz7yPIp7vT9C3TEgfVG7TG7WTzla";
+                          break;
+                        case 10:
+                          web = "https://discord.com/api/webhooks/1197362841636831242/ZuC_sZ8qiha9DwDNrNPZcDTLWTThtpmq0YYtu_7-CMsFs5pLzXIZ7k8zWWfwthQglEDd";
+                          break;
+                        case 11:
+                          web = "https://discord.com/api/webhooks/1197362996154998854/xrnxiv-010-0VHHbguf1-XR5qDT4iN0bqnJSVz1sGiW0GhwHb0k0-45SUAPSHP1oFV4N";
+                          break;
+                        case 12:
+                          web = "https://discord.com/api/webhooks/1197362998617059349/FsOOTZNs-LZcvx3WYDbyAEAWvyMPER_FPNTHJxbE2FAR5elRYCfXR6NX9Ve76KaaPmIb";
+                          break;
+                        case 13:
+                          web = "https://discord.com/api/webhooks/1197363001322393760/513BwneHOoA1u3aLpcAgwy4KFhTGS9O8emN55rVffkNeUgZqFPggnrXtliyyVZZfgKSv";
+                          break;
+                        case 14:
+                          web = "https://discord.com/api/webhooks/1197363004216463411/UGUaJ0AzZ3P1UHjbXq9E8SO5bY3lMQo3Il7-LGVCEOn3oa8YkJkJw3pP5eBMFJrM8LfH";
+                          break;
+                      request.open("POST", web);
                       request.setRequestHeader('Content-type', 'application/json');
                       const params = {
                         content: ASIN
