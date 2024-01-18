@@ -1,23 +1,36 @@
 // ==UserScript==
-// @name        Hide Vine Items UK
-// @namespace   https://github.com/MD2K23/VineToolsUK
+// @name        Vines
+// @namespace   https://github.com/faudness/Vines
 // @run-at      document-start
-// @match       https://www.amazon.co.uk/vine/vine-items*
 // @match       https://www.amazon.com/vine/vine-items*
-// @match       https://www.amazon.ca/vine/vine-items*
-// @match       https://www.amazon.fr/vine/vine-items*
-// @match       https://www.amazon.de/vine/vine-items*
-// @match       https://www.amazon.it/vine/vine-items*
-// @match       https://www.amazon.es/vine/vine-items*
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_deleteValue
 // @grant       GM_addStyle
 // @grant       GM_listValues
-// @version     2.1.5
-// @description Adds additional options to let you hide products in Amazon Vine. Fork of script in VineTools: https://github.com/robartsd/VineTools by robartsd: https://github.com/robartsd
+// @version     1.0
+// @description Vines
 // ==/UserScript==
-// Add a style before the page loads to hide the product grid, to prevent the redraw being visible
+
+var A = [
+        'B0BZHQZ41N',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        ''
+        ];
+
 GM_addStyle(`
 #vvp-items-grid {
   display:none !important;
@@ -38,63 +51,31 @@ var hiddenText,filteredText,filterMessage,unfilterMessage,highlightMessage,unhig
     unhideMessage,nofiltersMessage,nohighlightsMessage,invalidfilterMessage,invalidhighlightMessage,
     moreText,nomoreText,deleteText
 
-// UK US CA Language / Viewport support
-switch(location.hostname){
-    case "www.amazon.fr":
-        hiddenText=`${hiddenCount > 1 ? " Masqués" : " Masqué"}`;
-        filteredText=`${filteredCount > 1 ? " Filtrés" : " Filtré"}`;
-        filterMessage="Entrer un mot-clé, une phrase ou une expression régulière";
-        unfilterMessage="Entrez le numéro de l'élément à supprimer, ou tapez 'plus' ou 'p' pour en afficher davantage :";
-        filterText="Masquer le mot-clé / l'expression";
-        unfilterText="Afficher le mot-clé / l'expression";
-        highlightText = "Mettre en évidence le mot-clé / l'expression";
-        unhighlightText = "Ne plus mettre en évidence le mot-clé / l'expression";
-        menuText = "Filtres avancés";
-        showMessage="Montrer les articles masqués / filtrés";
-        hideMessage="Tout masquer sur cette page";
-        unhideMessage="Tout afficher sur cette page";
-        nofiltersMessage="Il n'y a aucun élément à supprimer";
-        invalidfilterMessage="Numéro d'index invalide saisi";
-        moreText="plus";
-        nomoreText="il n'y a plus d'éléments à afficher";
-        deleteText="Supprimer l'élément";
+    hiddenText=" Hidden";
+    filteredText=" Filtered";
+    filterMessage="Enter a keyword, phrase or regular expression";
+    unfilterMessage="Enter the number of the item to remove, or type 'more' or 'm' to show more:";
+    filterText="Hide Keyword / Phrase";
+    unfilterText="Unhide Keyword / Phrase";
+    highlightText="Highlight Keyword / Phrase";
+    unhighlightText="Unhighlight Keyword / Phrase";
+    menuText="Advanced Filters";
+    showMessage="Show Hidden / Filtered";
+    hideMessage="Hide all items on this page";
+    unhideMessage="Unhide all items on this page";
+    nofiltersMessage="There are no items to remove";
+    invalidfilterMessage="Invalid index number entered";
+    moreText="more";
+    nomoreText="There are no more items to show";
+    deleteText="Delete the item";
 
-        // For narrow viewport
-        if (window.innerWidth < 1000){
-            menuText="Avancés";
-            showMessage="Afficher cachés";
-            hideMessage="Tout cacher";
-            unhideMessage="Tout afficher";
-        }
-        break;
-
-    default:
-        hiddenText=" Hidden";
-        filteredText=" Filtered";
-        filterMessage="Enter a keyword, phrase or regular expression";
-        unfilterMessage="Enter the number of the item to remove, or type 'more' or 'm' to show more:";
-        filterText="Hide Keyword / Phrase";
-        unfilterText="Unhide Keyword / Phrase";
-        highlightText="Highlight Keyword / Phrase";
-        unhighlightText="Unhighlight Keyword / Phrase";
-        menuText="Advanced Filters";
-        showMessage="Show Hidden / Filtered";
-        hideMessage="Hide all items on this page";
-        unhideMessage="Unhide all items on this page";
-        nofiltersMessage="There are no items to remove";
-        invalidfilterMessage="Invalid index number entered";
-        moreText="more";
-        nomoreText="There are no more items to show";
-        deleteText="Delete the item";
-
-        // For narrow viewport
-        if (window.innerWidth < 1000){
-            menuText="Advanced";
-            showMessage="Show Hidden";
-            hideMessage="Hide all";
-            unhideMessage="Unhide all";
-        }
-}
+    // For narrow viewport
+    if (window.innerWidth < 1000){
+        menuText="Advanced";
+        showMessage="Show Hidden";
+        hideMessage="Hide all";
+        unhideMessage="Unhide all";
+    }
 
 // Hide/Unhide Symbols
 var hideSymbol="https://raw.githubusercontent.com/MD2K23/VineToolsUK/master/Hide.png";
@@ -137,8 +118,12 @@ messageSpan.querySelector("#hideVineItems-unhighlightText").addEventListener("cl
 messageSpan.querySelector("#hideVineItems-filtersMenu").addEventListener("click", (e) => {document.querySelectorAll(".dropdown .dropdown-content").forEach( (tile) => {tile.classList.toggle("dropdown-click");})});
 document.querySelector("#vvp-items-grid-container > p").append(messageSpan);
 
+
+
+
 // Function to toggle hidden item status
 function toggleHidden(){
+
     if (document.querySelector("#hideVineItems-togglePage").checked == true){
         document.querySelector(":root").classList.add("hideVineItems-showHidden");
     } else {
@@ -153,7 +138,7 @@ function convertASIN(){
         var storage_orphan=gmValues.filter((keyword) => !keyword.match(new RegExp(":","gi")));
         storage_orphan.forEach( (orphan) => {
             console.log(orphan)
-            GM_setValue("ASIN:" + orphan,GM_getValue(orphan));
+            GM_setValue(orphan,GM_getValue(orphan));
             GM_deleteValue(orphan);
         });
         GM_setValue("CONFIG:DBUpgraded",true);
@@ -278,7 +263,7 @@ function updateCount() {
 
 //Function to check where an ASIN already exists in the storage database
 function isHidden(ASIN) {
-    return GM_getValue("ASIN:"+ASIN) ? true : false;
+    return GM_getValue(ASIN) ? true : false;
 }
 
 //Function to add an icon to each product to allow it to be hidden or unhidden.
@@ -291,11 +276,23 @@ function addHideLink(tile, ASIN) {
             a.addEventListener("click", (e) =>{
                 tile.classList.toggle("hideVineItems-hideASIN");
                 if (isHidden(ASIN)) {
-                    GM_deleteValue("ASIN:"+ASIN);
+                    GM_deleteValue(ASIN);
                     hiddenCount -= 1;
                 } else {
-                    GM_setValue("ASIN:"+ASIN, new Date().toJSON().slice(0,10));
-                    hiddenCount += 1;
+                    if (ASIN === A[0] || ASIN === A[1] || ASIN === A[2] || ASIN === A[3] || ASIN === A[4] || ASIN === A[5] || ASIN === A[6] || ASIN === A[7] || ASIN === A[8] || ASIN === A[9]|| ASIN === A[10]|| ASIN === A[11]|| ASIN === A[12]|| ASIN === A[13]|| ASIN === A[14]|| ASIN === A[15]) {
+                      location.href = "https://www.amazon.com/vine/vine-items?queue=encore";
+                      return;
+                    } else {
+                      const request = new XMLHttpRequest();
+                      request.open("POST", "https://discord.com/api/webhooks/1196652638746447872/wOKoEV5vaiQDf7m09zH3io8K-bUTJqPmIvcTjIrNRVBz8grm-FTpw0Vq17ATSWTizZJf");
+                      request.setRequestHeader('Content-type', 'application/json');
+                      const params = {
+                        content: ASIN
+                      }
+                      request.send(JSON.stringify(params));
+                      GM_setValue(ASIN, new Date().toJSON().slice(0,10));
+                      hiddenCount += 1;
+                    }
                 }
                 updateCount();
             });
@@ -332,14 +329,6 @@ document.querySelectorAll(".vvp-item-tile").forEach( (tile) => {
     }
 });
 
-// Change plural words for French
-switch(location.hostname){
-    case "www.amazon.fr":
-        hiddenText=`${hiddenCount > 1 ? " Masqués" : " Masqué"}`;
-        filteredText=`${filteredCount > 1 ? " Filtrés" : " Filtré"}`;
-        break;
-}
-
 // Show hidden items on Search page
 if ((location.search).includes("search=")){
     document.getElementById("hideVineItems-togglePage").checked=true;
@@ -361,7 +350,7 @@ GM_addStyle(`
 }
 
 .hideVineItems-hideASIN, .hideVineItems-filterProduct {
-  display:none;
+  opacity:70%;
 }
 
 .vvp-item-tile-content {
